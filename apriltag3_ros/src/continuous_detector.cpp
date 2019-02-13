@@ -56,7 +56,7 @@ void ContinuousDetector::onInit ()
       it_->subscribeCamera("image_rect", 1,
                           &ContinuousDetector::imageCallback, this);
   tag_detections_publisher_ =
-      nh.advertise<AprilTagDetectionArray>("tag_detections", 1);
+      nh.advertise<AprilTagDetectionArray>("AprilTagDetectionArray", 1);
   if (draw_tag_detections_image_)
   {
     tag_detections_image_publisher_ = it_->advertise("tag_detections_image", 1);
