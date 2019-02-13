@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>apriltag3</name>
+  <version>0.0.1</version>
+  <description>
+    Catkin AprilTag 3 algorithm
+    (https://github.com/AprilRobotics/apriltags/commit/9e5eb0966c1f2929c6373e428c1c53ad73de364f).
+  </description>
+
+  <maintainer email="perseghetti@gmail.com">Benjamin Perseghetti</maintainer>
+  <author email="perseghetti@gmail.com">Benjamin Perseghetti</author>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/AprilRobotics/apriltags/commit/9e5eb0966c1f2929c6373e428c1c53ad73de364f</url>
+  <url type="website">http://www.ros.org/wiki/apriltag3_ros</url>
+  <url type="bugtracker">https://github.com/rudislabs/apriltag3_ros/issues</url>
+  <url type="repository">https://github.com/rudislabs/apriltag3_ros</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

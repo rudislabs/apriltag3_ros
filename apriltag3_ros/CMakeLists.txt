@@ -1,0 +1,121 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(apriltag3_ros)
+
+find_package(catkin REQUIRED COMPONENTS
+  apriltag3
+  geometry_msgs
+  image_transport
+  image_geometry
+  roscpp
+  sensor_msgs
+  std_msgs
+  message_generation
+  cv_bridge
+  tf
+  cmake_modules
+  nodelet
+  pluginlib
+)
+
+find_package(Eigen3 REQUIRED)
+find_package(OpenCV REQUIRED)
+
+# Set the build type.  Options are:
+#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
+#  Debug          : w/ debug symbols, w/o optimization
+#  Release        : w/o debug symbols, w/ optimization
+#  RelWithDebInfo : w/ debug symbols, w/ optimization
+#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
+set(CMAKE_BUILD_TYPE Debug)
+
+set(CMAKE_CXX_STANDARD 11)
+
+add_definitions (-Wall -O3)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -funsafe-loop-optimizations -fsee -funroll-loops -fno-math-errno -funsafe-math-optimizations -ffinite-math-only -fno-signed-zeros ")
+
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES x86_64 OR x86_32)
+  message("enabling msse2 for x86_64 or x86_32 architecture")
+  #  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -msse2 ")
+endif(${CMAKE_SYSTEM_PROCESSOR} MATCHES x86_64 OR x86_32)
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm)
+  message("enabling -mfpu=neon -mfloat-abi=softfp for ARM architecture")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv7-a -mcpu=cortex-a9 -mfpu=neon -mtune=cortex-a9 -mvectorize-with-neon-quad -ffast-math ")
+endif(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm)
+
+add_message_files(
+  FILES
+  AprilTagDetectionArray.msg
+  AprilTagDetection.msg
+)
+
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  geometry_msgs
+  sensor_msgs
+)
+
+catkin_package(
+  INCLUDE_DIRS include
+  CATKIN_DEPENDS apriltag3 geometry_msgs image_transport roscpp sensor_msgs std_msgs message_runtime cv_bridge tf nodelet pluginlib
+  DEPENDS OpenCV
+)
+
+###########
+## Build ##
+###########
+
+include_directories(include
+  ${catkin_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+)
+
+add_library(common src/common_functions.cpp)
+add_dependencies(common ${PROJECT_NAME}_generate_messages_cpp)
+target_link_libraries(common
+  ${catkin_LIBRARIES}
+  ${Eigen3_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+add_library(continuous_detector src/continuous_detector.cpp)
+target_link_libraries(continuous_detector
+  common
+  ${catkin_LIBRARIES}
+)
+
+
+add_executable(${PROJECT_NAME}_continuous_node src/${PROJECT_NAME}_continuous_node.cpp)
+add_dependencies(${PROJECT_NAME}_continuous_node ${PROJECT_NAME}_generate_messages_cpp)
+target_link_libraries(${PROJECT_NAME}_continuous_node
+  continuous_detector
+  ${catkin_LIBRARIES}
+)
+
+
+########################################################
+# Installs
+########################################################
+
+install(
+  DIRECTORY
+    include/${PROJECT_NAME}/
+  DESTINATION
+    ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+)
+
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(FILES nodelet_plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS
+    common
+    continuous_detector
+    ${PROJECT_NAME}_continuous_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
