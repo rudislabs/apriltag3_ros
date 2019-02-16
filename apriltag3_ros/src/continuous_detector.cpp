@@ -71,7 +71,7 @@ void ContinuousDetector::imageCallback (
   try
   {
     cv_image_ = cv_bridge::toCvCopy(image_rect,
-                                    sensor_msgs::image_encodings::BGR8);
+                                    sensor_msgs::image_encodings::MONO8);
   }
   catch (cv_bridge::Exception& e)
   {

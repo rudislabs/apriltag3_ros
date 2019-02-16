@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="at_camera" default="camera/infra1"/>
+
+  <include file="$(find realsense2_camera)/launch/IR_only.launch"></include>
+
+
+  <include file="$(find apriltag3_ros)/launch/continuous_detection.launch">
+    <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
+    <arg name="camera_name" default="/$(arg at_camera)" />
+    <arg name="camera_frame" default="$(arg at_camera)" />
+    <arg name="image_topic" default="image_rect_raw" />
+  </include>
+
+</launch>
