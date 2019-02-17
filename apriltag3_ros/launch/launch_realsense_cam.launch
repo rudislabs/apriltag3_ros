@@ -4,7 +4,7 @@
 
   <include file="$(find realsense2_camera)/launch/rs_from_file.launch">
   	$(find realsense2_camera)
-  	<arg name="json_file_path"      default="$(find apriltag3_ros)/config/D435.json"/>
+  	<arg name="json_file_path"      default="$(find apriltag3_ros)/config/D435_AUTO.json"/>
   	<arg name="enable_fisheye"      default="false"/>
   	<arg name="enable_depth"        default="false"/>
   	<arg name="infra1_width"        default="1280"/>
