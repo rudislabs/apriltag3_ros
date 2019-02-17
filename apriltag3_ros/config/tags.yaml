@@ -95,6 +95,16 @@ standalone_tags:
     {id: 87, size: 0.176},
     {id: 88, size: 0.176},
     {id: 89, size: 0.176},
+    {id: 90, size: 0.176},
+    {id: 91, size: 0.176},
+    {id: 92, size: 0.176},
+    {id: 93, size: 0.176},
+    {id: 94, size: 0.176},
+    {id: 95, size: 0.176},
+    {id: 96, size: 0.176},
+    {id: 97, size: 0.176},
+    {id: 98, size: 0.176},
+    {id: 99, size: 0.176}
   ]
 # ## Tag bundle definitions
 tag_bundles:
