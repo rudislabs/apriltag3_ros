@@ -8,6 +8,8 @@
   <group if="$(arg zed)">
     <include file="$(find zed_wrapper)/launch/zed.launch">
     </include>
+
+    <node name="zed_image_throttler" type="throttle" pkg="topic_tools" args="messages /zed/right/image_rect_color 15 /zed/right/throttled_image_rect" />
   </group>
 
   <group if="$(arg apriltag3)">
@@ -15,7 +17,7 @@
       <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
       <arg name="camera_name" default="/zed/right" />
       <arg name="camera_frame" default="zed/right" />
-      <arg name="image_topic" default="image_rect_color" />
+      <arg name="image_topic" default="throttled_image_rect" />
     </include>
   </group>
 
