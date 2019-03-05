@@ -12,7 +12,7 @@
     </include>
     <group if="$(arg throttle_zed)">
       <node name="zed_image_throttler" type="throttle" pkg="topic_tools" args="messages /zed/right/image_rect_color 15 /zed_throttled/throttled_image_rect" />
-      <node name="zed_image_throttler" type="throttle" pkg="topic_tools" args="messages /zed/right/camera_info 15 /zed_throttled/camera_info" />
+      <node name="zed_info_throttler" type="throttle" pkg="topic_tools" args="messages /zed/right/camera_info 15 /zed_throttled/camera_info" />
     </group>
   </group>
 
