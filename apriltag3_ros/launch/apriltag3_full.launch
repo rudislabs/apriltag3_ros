@@ -2,12 +2,11 @@
 <launch>
 
   <!--Required-->
-  <arg name="apriltag3" default="false"/>
   <arg name="ximea" default="false"/>
   <arg name="usb_cam" default="false"/>
   <arg name="ximea_color_mode" default="bw"/>
-  <arg name="apriltag_camera" default="ximea"/>
-  <arg name="sim" default="false"/>
+  <arg name="apriltag_camera" default="zed"/>
+  <arg name="apriltag_image_topic" default="image_rect_color"/>
   <arg name="live" default="false"/>
   <arg name="replay" default="false"/>
   <arg name="cam_n" default="COMAU1707000"/>
@@ -33,28 +32,13 @@
         <param name="io_method" value="mmap"/>
       </node>
     </group>
-    <group if="$(arg apriltag3)">
-      <include file="$(find apriltag3_ros)/launch/continuous_detection.launch">
-        <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
-        <arg name="camera_name" default="/$(arg apriltag_camera)" />
-        <arg name="camera_frame" default="$(arg apriltag_camera)" />
-        <arg name="image_topic" default="image_raw" />
-      </include>
-    </group>
   </group>
 
-  <group if="$(arg sim)">
-    <include file="$(find apriltag3_ros)/launch/continuous_detection.launch">
-      <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
-      <arg name="camera_name" default="/IR_CAM" />
-      <arg name="camera_frame" default="IR_CAM" />
-      <arg name="image_topic" default="image_raw" />
-    </include>
-  </group>
-  <!--Replay only-->
-  <group if="$(arg replay)">
-    <node name="rqt_bag" pkg="rqt_bag" type="rqt_bag" required="false"/>
-  </group>
-
+  <include file="$(find apriltag3_ros)/launch/continuous_detection.launch">
+    <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
+    <arg name="camera_name" default="/$(arg apriltag_camera)" />
+    <arg name="camera_frame" default="$(arg apriltag_camera)" />
+    <arg name="image_topic" default="$(arg apriltag_image_topic)" />
+  </include>
 
 </launch>
