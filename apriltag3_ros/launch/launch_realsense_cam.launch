@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="at_camera" default="camera/infra1"/>
+
+  <include file="$(find realsense2_camera)/launch/rs_from_file.launch">
+  	$(find realsense2_camera)
+  	<arg name="json_file_path"      default="$(find apriltag3_ros)/config/D435_AUTO.json"/>
+  	<arg name="enable_fisheye"      default="false"/>
+  	<arg name="enable_depth"        default="false"/>
+  	<arg name="infra1_width"        default="1280"/>
+  	<arg name="infra1_height"       default="720"/>
+  	<arg name="enable_infra1"       default="true"/>
+  	<arg name="enable_infra2"       default="false"/>
+  	<arg name="enable_color"        default="false"/>
+  	<arg name="infra1_fps"          default="6"/>
+  	<arg name="enable_imu"          default="false"/>
+  </include>
+
+
+  <include file="$(find apriltag3_ros)/launch/continuous_detection.launch">
+    <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
+    <arg name="camera_name" default="/$(arg at_camera)" />
+    <arg name="camera_frame" default="$(arg at_camera)" />
+    <arg name="image_topic" default="image_rect_raw" />
+  </include>
+
+</launch>
