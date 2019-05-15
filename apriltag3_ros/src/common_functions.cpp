@@ -289,6 +289,7 @@ AprilTagDetectionArray TagDetector::detectTags (
     AprilTagDetection tag_detection;
     tag_detection.pose = tag_pose;
     tag_detection.id.push_back(detection->id);
+    tag_detection.bundle_id = "";
     tag_detection.size.push_back(tag_size);
     tag_detection_array.detections.push_back(tag_detection);
     detection_names.push_back(standaloneDescription->frame_name());
@@ -324,6 +325,7 @@ AprilTagDetectionArray TagDetector::detectTags (
       AprilTagDetection tag_detection;
       tag_detection.pose = bundle_pose;
       tag_detection.id = bundle.bundleIds();
+      tag_detection.bundle_id = bundleName;
       tag_detection.size = bundle.bundleSizes();
       tag_detection_array.detections.push_back(tag_detection);
       detection_names.push_back(bundle.name());
