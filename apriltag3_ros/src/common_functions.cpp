@@ -303,10 +303,9 @@ AprilTagDetectionArray TagDetector::detectTags (
     // Get bundle name
     std::string bundleName = tag_bundle_descriptions_[j].name();
 
-    std::map<std::string,
-             std::vector<cv::Point3d> >::iterator it =
-        bundleObjectPoints.find(bundleName);
-    if (it != bundleObjectPoints.end())
+    std::map<std::string, std::vector<cv::Point3d> >::iterator it = bundleObjectPoints.find(bundleName);
+
+    if (it != bundleObjectPoints.end() && it->second.size() == 8)
     {
       // Some member tags of this bundle were detected, get the bundle's
       // position!
