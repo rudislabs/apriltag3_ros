@@ -47,48 +47,51 @@ void ContinuousDetector::onInit ()
   ros::NodeHandle& pnh = getPrivateNodeHandle();
 
   tag_detector_ = std::shared_ptr<TagDetector>(new TagDetector(pnh));
-  draw_tag_detections_image_ = getAprilTagOption<bool>(pnh, 
-      "publish_tag_detections_image", false);
-  it_ = std::shared_ptr<image_transport::ImageTransport>(
-      new image_transport::ImageTransport(nh));
+  draw_tag_detections_image_ = getAprilTagOption<bool>(pnh, "publish_tag_detections_image", false);
+  it_ = std::shared_ptr<image_transport::ImageTransport>(new image_transport::ImageTransport(nh));
 
-  camera_image_subscriber_ =
-      it_->subscribeCamera("image_rect", 1,
-                          &ContinuousDetector::imageCallback, this);
-  tag_detections_publisher_ =
-      nh.advertise<AprilTagDetectionArray>("AprilTagDetectionArray", 1);
+  subUAVpose = nh.subscribe("/mavros/local_position/pose", 1, &ContinuousDetector::poseCallback, this);
+
+  camera_image_subscriber_ = it_->subscribeCamera("image_rect", 1, &ContinuousDetector::imageCallback, this);
+  tag_detections_publisher_ = nh.advertise<AprilTagDetectionArray>("AprilTagDetectionArray", 1);
   if (draw_tag_detections_image_)
   {
     tag_detections_image_publisher_ = it_->advertise("tag_detections_image", 1);
   }
+
+  uavPose.pose.position.z = 0.0;
 }
 
-void ContinuousDetector::imageCallback (
-    const sensor_msgs::ImageConstPtr& image_rect,
-    const sensor_msgs::CameraInfoConstPtr& camera_info)
+void ContinuousDetector::poseCallback(const geometry_msgs::PoseStamped &msg)
 {
-  
-  try
-  {
-    cv_image_ = cv_bridge::toCvCopy(image_rect,
-                                    sensor_msgs::image_encodings::BGR8);
-  }
-  catch (cv_bridge::Exception& e)
-  {
-    ROS_ERROR("cv_bridge exception: %s", e.what());
-    return;
-  }
+  // copy message
+  uavPose = msg;
+}
 
-  // Publish detected tags in the image by AprilTags 3
-  tag_detections_publisher_.publish(
-      tag_detector_->detectTags(cv_image_,camera_info));
-
-  // Publish the camera image overlaid by outlines of the detected tags and
-  // their payload values
-  if (draw_tag_detections_image_)
+void ContinuousDetector::imageCallback (const sensor_msgs::ImageConstPtr& image_rect, const sensor_msgs::CameraInfoConstPtr& camera_info)
+{
+  if (uavPose.pose.position.z < 1.5)
   {
-    tag_detector_->drawDetections(cv_image_);
-    tag_detections_image_publisher_.publish(cv_image_->toImageMsg());
+    try
+    {
+      cv_image_ = cv_bridge::toCvCopy(image_rect, sensor_msgs::image_encodings::BGR8);
+    }
+    catch (cv_bridge::Exception& e)
+    {
+      ROS_ERROR("cv_bridge exception: %s", e.what());
+      return;
+    }
+
+    // Publish detected tags in the image by AprilTags 3
+    tag_detections_publisher_.publish(tag_detector_->detectTags(cv_image_,camera_info));
+
+    // Publish the camera image overlaid by outlines of the detected tags and
+    // their payload values
+    if (draw_tag_detections_image_)
+    {
+      tag_detector_->drawDetections(cv_image_);
+      tag_detections_image_publisher_.publish(cv_image_->toImageMsg());
+    }
   }
 }
 
