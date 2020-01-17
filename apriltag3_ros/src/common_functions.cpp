@@ -33,6 +33,9 @@
 
 #include <apriltag3/common/homography.h>
 #include <apriltag3/tag36h11.h>
+#include <apriltag3/tagStandard52h13.h>
+#include <apriltag3/tagStandard41h12.h>
+#include <apriltag3/tagCircle49h12.h>
 
 namespace apriltag3_ros
 {
@@ -98,12 +101,15 @@ TagDetector::TagDetector(ros::NodeHandle pnh) :
 
   // Define the tag family whose tags should be searched for in the camera
   // images
-  if (family_ == "tag36h11")
-  {
+  if (family_ == "tag36h11") {
     tf_ = tag36h11_create();
-  }
-  else
-  {
+  } else if (family_ == "tagStandard41h12") {
+    tf_ = tagStandard41h12_create();
+  } else if (family_ == "tagStandard52h13") {
+    tf_ = tagStandard52h13_create();
+  } else if (family_ == "tagCircle49h12") {
+    tf_ = tagCircle49h12_create();
+  } else {
     ROS_WARN("Invalid tag family specified! Aborting");
     exit(1);
   }
@@ -138,7 +144,16 @@ TagDetector::~TagDetector() {
   // free memory associated with tag family
   if (family_ == "tag36h11")
   {
-    tag36h11_destroy(tf_);
+    tag36h11_destroy(tf_); 
+  } else if (family_ == "tagStandard41h12")
+  {
+    tagStandard41h12_destroy(tf_); 
+  } else if (family_ == "tagStandard52h13")
+  {
+    tagStandard52h13_destroy(tf_); 
+  } else if (family_ == "tagCircle49h12")
+  {
+    tagCircle49h12_destroy(tf_);
   }
 }
 

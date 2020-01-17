@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!--Required-->
+  <arg name="apriltag3" default="true"/>
+  <arg name="zed" default="true"/>
+  <arg name="throttle_zed" default="false"/>
+
+
+  <group if="$(arg zed)">
+    <include file="$(find zed_wrapper)/launch/zed.launch">
+    </include>
+    <group if="$(arg throttle_zed)">
+      <node name="zed_image_throttler" type="throttle" pkg="topic_tools" args="messages /zed/right/image_rect_color 15 /zed_throttled/throttled_image_rect" />
+      <node name="zed_info_throttler" type="throttle" pkg="topic_tools" args="messages /zed/right/camera_info 15 /zed_throttled/camera_info" />
+    </group>
+  </group>
+
+  <group if="$(arg apriltag3)">
+    <include file="$(find apriltag3_ros)/launch/continuous_detection.launch">
+      <arg name="node_namespace" default="apriltag3_ros_continuous_node" />
+      <arg name="camera_name" default="/zed/right" />
+      <arg name="camera_frame" default="zed/right" />
+      <arg name="image_topic" default="image_rect_color" />
+    </include>
+  </group>
+
+</launch>
